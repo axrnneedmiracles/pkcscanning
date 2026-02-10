@@ -3,13 +3,13 @@
 out/
 build/
 
-# Node
+# Production
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Environment
+# Environment variables
 .env
 .env.local
 .env.development.local
@@ -20,6 +20,9 @@ yarn-error.log*
 .genkit/
 genkit-state.json
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
+
+# Secrets
+*.pem
