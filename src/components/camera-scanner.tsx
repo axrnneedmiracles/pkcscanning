@@ -37,7 +37,6 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
         }
         setStream(userStream);
       } catch (err) {
-        console.error("Camera access denied", err);
         toast({
           title: "Camera Error",
           description: "Could not access camera. Please check permissions.",
@@ -85,12 +84,11 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
       } else {
         toast({
           title: "No Plate Found",
-          description: "Could not identify a license plate. Try a different angle or better lighting.",
+          description: "Could not identify a license plate.",
           variant: "destructive"
         });
       }
     } catch (error) {
-      console.error("Scan failed", error);
       toast({
         title: "Scan Failed",
         description: "An error occurred during OCR scanning.",
