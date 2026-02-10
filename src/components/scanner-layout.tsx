@@ -21,9 +21,7 @@ export function ScannerLayout() {
     if (saved) {
       try {
         setHistory(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to parse history", e);
-      }
+      } catch (e) {}
     }
   }, []);
 

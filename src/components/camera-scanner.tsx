@@ -157,7 +157,7 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
         </div>
       )}
 
-      <div className="absolute bottom-40 left-0 right-0 flex justify-center items-center z-20">
+      <div className="absolute bottom-32 left-0 right-0 flex justify-center items-center z-20">
         <button
           onClick={handleScan}
           disabled={isCapturing || !stream}

@@ -37,7 +37,6 @@ export function ScanHistory({ history, onClear }: ScanHistoryProps) {
       const result = await summarizeScanHistory({ scanHistory: historyStr });
       setSummary(result.summary);
     } catch (e) {
-      console.error(e);
       setSummary("Failed to generate summary. Please try again later.");
     } finally {
       setIsSummarizing(false);
@@ -123,7 +122,9 @@ export function ScanHistory({ history, onClear }: ScanHistoryProps) {
             <DialogTitle className="flex items-center gap-3 text-accent text-xl">
               <div className="p-2 bg-accent/10 rounded-lg">
                 <div className="h-5 w-5 bg-accent/20 rounded flex items-center justify-center">
-                  <Info className="h-4 w-4 text-accent" />
+                  <div className="h-4 w-4 text-accent">
+                    <Info className="h-4 w-4" />
+                  </div>
                 </div>
               </div>
               Intelligence Report
