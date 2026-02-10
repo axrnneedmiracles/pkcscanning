@@ -1,17 +1,12 @@
 'use server';
 /**
  * @fileOverview Implements a Genkit flow to recognize car number plates from an image.
- *
- * - initiateScanWithPrompt - An asynchronous function that analyzes an image to find a license plate.
- * - InitiateScanWithPromptInput - Includes an optional prompt and the image data URI.
- * - InitiateScanWithPromptOutput - The recognized plate number.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const InitiateScanWithPromptInputSchema = z.object({
-  prompt: z.string().optional().describe('An optional hint about the plate to look for.'),
   photoDataUri: z.string().describe("The image of the vehicle/plate as a data URI. Expected format: 'data:<mimetype>;base64,<encoded_data>'."),
 });
 export type InitiateScanWithPromptInput = z.infer<typeof InitiateScanWithPromptInputSchema>;
@@ -33,7 +28,6 @@ const initiateScanWithPromptPrompt = ai.definePrompt({
 
   Analyze the provided image and extract the primary vehicle license plate number.
   
-  {{#if prompt}}User Hint: {{{prompt}}}{{/if}}
   Image: {{media url=photoDataUri}}
   
   Instructions:
