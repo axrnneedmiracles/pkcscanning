@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Scan, Save, RefreshCcw, Loader2 } from "lucide-react";
 import { initiateScanWithPrompt } from "@/ai/flows/initiate-scan-with-prompt";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 interface CameraScannerProps {
   onScan: (plate: string) => void;
@@ -76,7 +77,7 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
       });
 
       if (result.plateNumber && result.plateNumber.trim().length > 0) {
-        setDetectedPlate(result.plateNumber);
+        setDetectedPlate(result.plateNumber.toUpperCase());
         toast({
           title: "Plate Detected",
           description: `Identified: ${result.plateNumber}`,
@@ -119,20 +120,20 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
         autoPlay
         playsInline
         muted
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
       />
       
       <canvas ref={canvasRef} className="hidden" />
 
-      <div className="absolute inset-0 pointer-events-none z-10">
+      <div className="absolute inset-0 pointer-events-none z-10 transition-opacity duration-500">
         <div className="scanner-overlay w-full h-full flex flex-col items-center justify-center p-4">
-          <div className="relative w-full h-full border-[1px] border-white/10 rounded-3xl flex items-center justify-center overflow-hidden">
+          <div className="relative w-full h-full border-[1px] border-white/5 rounded-3xl flex items-center justify-center overflow-hidden">
             {isScanning && <div className="scan-line" />}
             
             {!stream && (
-              <div className="flex flex-col items-center gap-2 text-white/50 bg-black/40 p-6 rounded-2xl backdrop-blur-md">
-                <Loader2 className="animate-spin h-10 w-10" />
-                <p className="font-medium">Initializing Camera...</p>
+              <div className="flex flex-col items-center gap-4 text-white/50 bg-black/40 p-8 rounded-3xl backdrop-blur-xl animate-in fade-in zoom-in duration-500">
+                <Loader2 className="animate-spin h-12 w-12 text-accent" />
+                <p className="font-medium tracking-wide">Initializing Lens...</p>
               </div>
             )}
           </div>
@@ -140,26 +141,26 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
       </div>
 
       {detectedPlate && !isScanning && (
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[90%] max-w-xs animate-in slide-in-from-top-4 duration-300 z-40">
-          <Card className="glass-panel p-4 shadow-2xl border-accent/30 plate-highlight">
-            <div className="flex flex-col items-center gap-3">
-              <Badge variant="outline" className="text-accent border-accent/50 text-[10px] uppercase tracking-widest font-bold">
+        <div className="absolute top-24 left-1/2 -translate-x-1/2 w-[90%] max-w-xs animate-in slide-in-from-top-12 fade-in duration-500 z-40 float-animation">
+          <Card className="glass-panel p-5 shadow-2xl border-accent/40 plate-highlight">
+            <div className="flex flex-col items-center gap-4">
+              <Badge variant="outline" className="text-accent border-accent/50 text-[10px] uppercase tracking-[0.2em] font-bold px-3 py-1">
                 Detected Plate
               </Badge>
-              <div className="text-4xl font-mono font-bold tracking-tighter text-accent bg-black/40 px-6 py-2 rounded-lg border border-white/10 w-full text-center">
+              <div className="text-4xl font-mono font-bold tracking-tighter text-accent bg-black/60 px-6 py-3 rounded-xl border border-white/10 w-full text-center shadow-inner">
                 {detectedPlate}
               </div>
-              <div className="flex w-full gap-2">
+              <div className="flex w-full gap-3 mt-1">
                 <Button 
                   variant="outline" 
-                  className="flex-1 bg-secondary/50 border-white/10 hover:bg-secondary"
+                  className="flex-1 bg-secondary/30 border-white/10 hover:bg-secondary/60 transition-all"
                   onClick={() => setDetectedPlate(null)}
                 >
                   <RefreshCcw className="h-4 w-4 mr-2" />
                   Redo
                 </Button>
                 <Button 
-                  className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
+                  className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90 shadow-[0_0_20px_rgba(var(--accent),0.3)] transition-all"
                   onClick={savePlate}
                 >
                   <Save className="h-4 w-4 mr-2" />
@@ -175,12 +176,19 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
         <button
           onClick={handleScan}
           disabled={isCapturing || !stream}
-          className="group relative flex items-center justify-center w-24 h-24 rounded-full transition-all active:scale-90 disabled:opacity-50"
+          className={cn(
+            "group relative flex items-center justify-center w-28 h-28 rounded-full transition-all duration-300 active:scale-95 disabled:opacity-50",
+            isCapturing && "scale-110"
+          )}
         >
-          <div className="absolute inset-0 rounded-full border-4 border-accent/20 scale-110" />
-          <div className="absolute inset-2 rounded-full border-2 border-accent/40 animate-pulse" />
-          <div className="w-16 h-16 rounded-full bg-accent flex items-center justify-center text-primary-foreground shadow-[0_0_30px_rgba(var(--accent),0.4)] group-hover:scale-105 transition-transform">
-            {isCapturing ? <Loader2 className="animate-spin h-8 w-8" /> : <Scan className="h-10 w-10" />}
+          <div className="absolute inset-0 rounded-full border-2 border-accent/20 scale-110 group-hover:scale-125 transition-transform duration-500" />
+          <div className="absolute inset-2 rounded-full border border-accent/40 animate-pulse" />
+          <div className="w-20 h-20 rounded-full bg-accent flex items-center justify-center text-primary-foreground shadow-[0_0_40px_rgba(var(--accent),0.5)] group-hover:shadow-[0_0_60px_rgba(var(--accent),0.7)] group-hover:scale-105 transition-all duration-300">
+            {isCapturing ? (
+              <Loader2 className="animate-spin h-10 w-10" />
+            ) : (
+              <Scan className="h-10 w-10 group-hover:rotate-90 transition-transform duration-500" />
+            )}
           </div>
         </button>
       </div>
