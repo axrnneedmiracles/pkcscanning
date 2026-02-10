@@ -14,6 +14,7 @@ interface CameraScannerProps {
 
 export function CameraScanner({ onScan }: CameraScannerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [detectedPlate, setDetectedPlate] = useState<string | null>(null);
@@ -24,7 +25,11 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
     async function setupCamera() {
       try {
         const userStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+          video: { 
+            facingMode: "environment", 
+            width: { ideal: 1920 }, 
+            height: { ideal: 1080 } 
+          },
         });
         if (videoRef.current) {
           videoRef.current.srcObject = userStream;
@@ -48,30 +53,45 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
   }, []);
 
   const handleScan = async () => {
-    if (isCapturing) return;
+    if (isCapturing || !videoRef.current || !canvasRef.current) return;
 
     setIsCapturing(true);
     setIsScanning(true);
 
     try {
-      // In a real app, we'd capture a frame from the video and send it to an OCR flow.
-      // Since our flow is text-based, we'll simulate the "scanning" of a scene.
-      // For the sake of this expert demo, we'll call the flow with a generic scene prompt.
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      
+      // Setup canvas to match video dimensions
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error("Could not get canvas context");
+      
+      // Draw the current video frame to the canvas
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      // Convert to data URI
+      const photoDataUri = canvas.toDataURL('image/jpeg', 0.8);
+
       const result = await initiateScanWithPrompt({ 
-        prompt: "Analyze the current vehicle in view and identify its license plate number." 
+        photoDataUri,
+        prompt: "Identify the license plate in this image."
       });
 
-      if (result.plateNumber) {
+      if (result.plateNumber && result.plateNumber.trim().length > 0) {
         setDetectedPlate(result.plateNumber);
         toast({
           title: "Plate Detected",
           description: `Identified: ${result.plateNumber}`,
         });
       } else {
-        // Fallback for demo if no plate found in mock
-        const mockPlates = ["ABC-1234", "XYZ-9876", "DL-5SB-1029", "CA-992-PX", "TX-B45-920"];
-        const fallback = mockPlates[Math.floor(Math.random() * mockPlates.length)];
-        setDetectedPlate(fallback);
+        toast({
+          title: "No Plate Found",
+          description: "Could not clearly identify a license plate. Try moving closer.",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error("Scan failed", error);
@@ -99,14 +119,17 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
 
   return (
     <div className="relative w-full h-full bg-black overflow-hidden flex flex-col items-center justify-center">
-      {/* Video Feed */}
+      {/* Video Feed - Flipped horizontally as requested */}
       <video
         ref={videoRef}
         autoPlay
         playsInline
         muted
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover scale-x-[-1]"
       />
+      
+      {/* Hidden canvas for capturing frames */}
+      <canvas ref={canvasRef} className="hidden" />
 
       {/* Scanner Overlays */}
       <div className="absolute inset-0 pointer-events-none">
@@ -136,7 +159,7 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
 
       {/* Detection Result Card */}
       {detectedPlate && !isScanning && (
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-full max-w-xs animate-in slide-in-from-top-4 duration-300">
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-full max-w-xs animate-in slide-in-from-top-4 duration-300 z-40">
           <Card className="glass-panel p-4 shadow-2xl border-accent/30 plate-highlight">
             <div className="flex flex-col items-center gap-3">
               <Badge variant="outline" className="text-accent border-accent/50 text-[10px] uppercase tracking-widest font-bold">
@@ -167,8 +190,8 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
         </div>
       )}
 
-      {/* Bottom Controls */}
-      <div className="absolute bottom-32 left-0 right-0 flex justify-center items-center z-20">
+      {/* Bottom Controls - Moved lower as requested */}
+      <div className="absolute bottom-24 left-0 right-0 flex justify-center items-center z-20">
         <button
           onClick={handleScan}
           disabled={isCapturing || !stream}
