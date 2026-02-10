@@ -1,13 +1,5 @@
 'use server';
 
-/**
- * @fileOverview Summarizes the scan history to identify patterns or frequently scanned plates.
- *
- * - summarizeScanHistory - A function that summarizes the scan history.
- * - SummarizeScanHistoryInput - The input type for the summarizeScanHistory function.
- * - SummarizeScanHistoryOutput - The return type for the summarizeScanHistory function.
- */
-
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 

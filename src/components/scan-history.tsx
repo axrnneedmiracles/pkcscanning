@@ -122,7 +122,9 @@ export function ScanHistory({ history, onClear }: ScanHistoryProps) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3 text-accent text-xl">
               <div className="p-2 bg-accent/10 rounded-lg">
-                <Info className="h-5 w-5" />
+                <div className="h-5 w-5 bg-accent/20 rounded flex items-center justify-center">
+                  <Info className="h-4 w-4 text-accent" />
+                </div>
               </div>
               Intelligence Report
             </DialogTitle>

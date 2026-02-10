@@ -1,7 +1,4 @@
 'use server';
-/**
- * @fileOverview Implements a Genkit flow to recognize car number plates from an image.
- */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
