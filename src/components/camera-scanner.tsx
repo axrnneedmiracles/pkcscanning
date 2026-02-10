@@ -115,7 +115,7 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
 
   return (
     <div className="relative w-full h-full bg-black overflow-hidden flex flex-col items-center justify-center">
-      {/* Video Feed - Mirroring removed to fix OCR reading backwards */}
+      {/* Video Feed */}
       <video
         ref={videoRef}
         autoPlay
@@ -129,11 +129,9 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
       {/* Full Screen Scanner Overlay */}
       <div className="absolute inset-0 pointer-events-none z-10">
         <div className="scanner-overlay w-full h-full flex flex-col items-center justify-center p-4">
-          {/* Subtle Full-screen frame */}
           <div className="relative w-full h-full border-[1px] border-white/10 rounded-3xl flex items-center justify-center overflow-hidden">
             {isScanning && <div className="scan-line" />}
             
-            {/* Corner decorations moved to edges */}
             <div className="absolute top-4 left-4 w-12 h-12 border-t-4 border-l-4 border-accent rounded-tl-xl" />
             <div className="absolute top-4 right-4 w-12 h-12 border-t-4 border-r-4 border-accent rounded-tr-xl" />
             <div className="absolute bottom-4 left-4 w-12 h-12 border-b-4 border-l-4 border-accent rounded-bl-xl" />
@@ -182,8 +180,8 @@ export function CameraScanner({ onScan }: CameraScannerProps) {
         </div>
       )}
 
-      {/* Bottom Controls - Moved lower to bottom-10 */}
-      <div className="absolute bottom-10 left-0 right-0 flex justify-center items-center z-20">
+      {/* Bottom Controls - Moved higher to bottom-32 to avoid overlap */}
+      <div className="absolute bottom-32 left-0 right-0 flex justify-center items-center z-20">
         <button
           onClick={handleScan}
           disabled={isCapturing || !stream}
