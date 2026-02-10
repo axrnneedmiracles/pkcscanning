@@ -4,15 +4,13 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const SummarizeScanHistoryInputSchema = z.object({
-  scanHistory: z
-    .string()
-    .describe('A list of scanned license plates and timestamps.'),
+  scanHistory: z.string(),
 });
 
 export type SummarizeScanHistoryInput = z.infer<typeof SummarizeScanHistoryInputSchema>;
 
 const SummarizeScanHistoryOutputSchema = z.object({
-  summary: z.string().describe('A summary of the scan history.'),
+  summary: z.string(),
 });
 
 export type SummarizeScanHistoryOutput = z.infer<typeof SummarizeScanHistoryOutputSchema>;
@@ -25,12 +23,7 @@ const prompt = ai.definePrompt({
   name: 'summarizeScanHistoryPrompt',
   input: {schema: SummarizeScanHistoryInputSchema},
   output: {schema: SummarizeScanHistoryOutputSchema},
-  prompt: `You are an expert at summarizing scan histories to identify patterns, frequently scanned plates, or specific vehicles.
-
-  Summarize the following scan history:
-
-  {{scanHistory}}
-  `,
+  prompt: `Summarize plate history: {{scanHistory}}`,
 });
 
 const summarizeScanHistoryFlow = ai.defineFlow(

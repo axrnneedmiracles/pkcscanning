@@ -4,12 +4,12 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const InitiateScanWithPromptInputSchema = z.object({
-  photoDataUri: z.string().describe("The image of the vehicle/plate as a data URI. Expected format: 'data:<mimetype>;base64,<encoded_data>'."),
+  photoDataUri: z.string(),
 });
 export type InitiateScanWithPromptInput = z.infer<typeof InitiateScanWithPromptInputSchema>;
 
 const InitiateScanWithPromptOutputSchema = z.object({
-  plateNumber: z.string().describe('The recognized car number plate. Return empty string if not found.'),
+  plateNumber: z.string(),
 });
 export type InitiateScanWithPromptOutput = z.infer<typeof InitiateScanWithPromptOutputSchema>;
 
@@ -21,20 +21,8 @@ const initiateScanWithPromptPrompt = ai.definePrompt({
   name: 'initiateScanWithPromptPrompt',
   input: {schema: InitiateScanWithPromptInputSchema},
   output: {schema: InitiateScanWithPromptOutputSchema},
-  prompt: `You are an expert OCR system specializing in international vehicle license plates.
-
-  Analyze the provided image and extract the primary vehicle license plate number.
-  
-  Image: {{media url=photoDataUri}}
-  
-  Instructions:
-  1. Locate the license plate in the image.
-  2. Extract the text exactly as it appears.
-  3. Clean the text of any small symbols or region codes if they are distinct from the main plate number.
-  4. If multiple plates are visible, pick the most prominent one.
-  5. If no plate is found, respond with an empty string for plateNumber.
-  
-  Respond ONLY with the JSON object containing the plateNumber.`,
+  prompt: `Extract license plate. Return JSON { "plateNumber": "TEXT" }.
+  Image: {{media url=photoDataUri}}`,
 });
 
 const initiateScanWithPromptFlow = ai.defineFlow(
