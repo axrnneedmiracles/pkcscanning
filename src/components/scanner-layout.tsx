@@ -51,7 +51,7 @@ export function ScannerLayout() {
             <Car className="text-accent h-6 w-6" />
           </div>
           <h1 className="text-xl font-headline font-bold tracking-tight text-foreground">
-            PlateSeeker
+            ParkConscious
           </h1>
         </div>
       </header>

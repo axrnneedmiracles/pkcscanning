@@ -3,7 +3,7 @@ import './globals.css';
 import {Toaster} from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'PlateSeeker | Live Number Plate OCR',
+  title: 'ParkConscious | Live Number Plate OCR',
   description: 'Real-time car number plate scanning and history log.',
 };
 
